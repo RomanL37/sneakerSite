@@ -1,22 +1,50 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+// import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 
-const Home = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [selectedBrands, setSelectedBrands] = useState([]);
+
+  const Home = () => {
+    const [products, setProducts] = useState([]);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [selectedBrands, setSelectedBrands] = useState([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [error, setError] = useState(null);
 
   // Моковые данные товаров
-  const products = [
-    { id: 1, name: 'Nike Air Max 95', price: 12000, brand: 'Nike', image: '/images/nike-air-max.jpg' },
-    { id: 2, name: 'Adidas Ultraboost', price: 15000, brand: 'Adidas', image: '/images/adidas-ultraboost.jpg' },
-    { id: 3, name: 'Puma RS-X', price: 9000, brand: 'Puma', image: '/images/puma-rsx.jpg' },
-    { id: 4, name: 'New Balance 574', price: 11000, brand: 'New Balance', image: '/images/nb-574.jpg' },
-    { id: 5, name: 'Nike Air Force 1', price: 10000, brand: 'Nike', image: '/images/nike-af1.jpg' },
-    { id: 6, name: 'Adidas Superstar', price: 8000, brand: 'Adidas', image: '/images/adidas-superstar.jpg' },
-    { id: 7, name: 'Puma Suede', price: 7500, brand: 'Puma', image: '/images/puma-suede.jpg' },
-    { id: 8, name: 'New Balance 990', price: 18000, brand: 'New Balance', image: '/images/nb-990.jpg' },
-  ];
+  // const products = [
+  //   { id: 1, name: 'Nike Air Max 95', price: 12000, brand: 'Nike', image: '/images/nike-air-max.jpg' },
+  //   { id: 2, name: 'Adidas Ultraboost', price: 15000, brand: 'Adidas', image: '/images/adidas-ultraboost.jpg' },
+  //   { id: 3, name: 'Puma RS-X', price: 9000, brand: 'Puma', image: '/images/puma-rsx.jpg' },
+  //   { id: 4, name: 'New Balance 574', price: 11000, brand: 'New Balance', image: '/images/nb-574.jpg' },
+  //   { id: 5, name: 'Nike Air Force 1', price: 10000, brand: 'Nike', image: '/images/nike-af1.jpg' },
+  //   { id: 6, name: 'Adidas Superstar', price: 8000, brand: 'Adidas', image: '/images/adidas-superstar.jpg' },
+  //   { id: 7, name: 'Puma Suede', price: 7500, brand: 'Puma', image: '/images/puma-suede.jpg' },
+  //   { id: 8, name: 'New Balance 990', price: 18000, brand: 'New Balance', image: '/images/nb-990.jpg' },
+  // ];
+  
+  // for product in products:
+  //    product.image
+
+  // Запрос к API
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setIsLoading(true);
+        const response = await fetch('http://127.0.0.1:8000/api/skus/'); // Замените на ваш URL API
+        if (!response.ok) {
+          throw new Error('Ошибка при загрузке данных');
+        }
+        const data = await response.json();
+        setProducts(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   // Фильтрация товаров
   const filteredProducts = products.filter(product => {
@@ -68,7 +96,11 @@ const Home = () => {
 
       <div className="products-grid-container">
         <h2 className="products-title">Наши кроссовки</h2>
-        {filteredProducts.length > 0 ? (
+        {isLoading ? (
+          <div className="loading">Загрузка...</div>
+        ) : error ? (
+          <div className="error">Ошибка: {error}</div>
+        ) : filteredProducts.length > 0 ? (
           <div className="products-grid">
             {filteredProducts.map(product => (
               <ProductCard key={product.id} product={product} />

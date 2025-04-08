@@ -36,7 +36,7 @@ const ProductCard = ({ product }) => {
       <Link to={`/products/${product.id}`} className="product-link">
         <div className="product-image-container">
           <img
-            src={product.image}
+            src={product.image_url}
             alt={product.name}
             className="product-image"
             onError={(e) => {
