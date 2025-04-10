@@ -1,40 +1,23 @@
 import React, { useState, useEffect } from 'react';
 // import { Link } from 'react-router-dom';
+import { fetchProducts } from '../api/products';
+import { fetchBrands } from '../api/brands';
 import ProductCard from '../components/ProductCard';
 
+const Home = () => {
+  const [products, setProducts] = useState([]);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedBrands, setSelectedBrands] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [brands, setBrands] = useState([]); // Состояние для брендов
 
-  const Home = () => {
-    const [products, setProducts] = useState([]);
-    const [searchTerm, setSearchTerm] = useState('');
-    const [selectedBrands, setSelectedBrands] = useState([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState(null);
-
-  // Моковые данные товаров
-  // const products = [
-  //   { id: 1, name: 'Nike Air Max 95', price: 12000, brand: 'Nike', image: '/images/nike-air-max.jpg' },
-  //   { id: 2, name: 'Adidas Ultraboost', price: 15000, brand: 'Adidas', image: '/images/adidas-ultraboost.jpg' },
-  //   { id: 3, name: 'Puma RS-X', price: 9000, brand: 'Puma', image: '/images/puma-rsx.jpg' },
-  //   { id: 4, name: 'New Balance 574', price: 11000, brand: 'New Balance', image: '/images/nb-574.jpg' },
-  //   { id: 5, name: 'Nike Air Force 1', price: 10000, brand: 'Nike', image: '/images/nike-af1.jpg' },
-  //   { id: 6, name: 'Adidas Superstar', price: 8000, brand: 'Adidas', image: '/images/adidas-superstar.jpg' },
-  //   { id: 7, name: 'Puma Suede', price: 7500, brand: 'Puma', image: '/images/puma-suede.jpg' },
-  //   { id: 8, name: 'New Balance 990', price: 18000, brand: 'New Balance', image: '/images/nb-990.jpg' },
-  // ];
-  
-  // for product in products:
-  //    product.image
-
-  // Запрос к API
+  // Запрос к API для продуктов
   useEffect(() => {
-    const fetchProducts = async () => {
+    const loadProducts = async () => {
       try {
         setIsLoading(true);
-        const response = await fetch('http://127.0.0.1:8000/api/skus/'); // Замените на ваш URL API
-        if (!response.ok) {
-          throw new Error('Ошибка при загрузке данных');
-        }
-        const data = await response.json();
+        const data = await fetchProducts();
         setProducts(data);
       } catch (err) {
         setError(err.message);
@@ -43,7 +26,21 @@ import ProductCard from '../components/ProductCard';
       }
     };
 
-    fetchProducts();
+    loadProducts();
+  }, []);
+
+  // Запрос к API для брендов
+  useEffect(() => {
+    const loadBrands = async () => {
+      try {
+        const data = await fetchBrands();
+        setBrands(data);
+      } catch (err) {
+        console.error('Ошибка при загрузке брендов:', err);
+      }
+    };
+
+    loadBrands();
   }, []);
 
   // Фильтрация товаров
@@ -53,12 +50,10 @@ import ProductCard from '../components/ProductCard';
     return matchesSearch && matchesBrand;
   });
 
-  const brands = ['Nike', 'Adidas', 'Puma', 'New Balance'];
-
   const toggleBrand = (brand) => {
-    setSelectedBrands(prev => 
-      prev.includes(brand) 
-        ? prev.filter(b => b !== brand) 
+    setSelectedBrands(prev =>
+      prev.includes(brand)
+        ? prev.filter(b => b !== brand)
         : [...prev, brand]
     );
   };
@@ -81,14 +76,14 @@ import ProductCard from '../components/ProductCard';
         <div className="brand-filters">
           <h3>Бренды</h3>
           {brands.map(brand => (
-            <label key={brand} className="brand-checkbox">
+            <label key={brand.id} className="brand-checkbox">
               <input
                 type="checkbox"
-                checked={selectedBrands.includes(brand)}
-                onChange={() => toggleBrand(brand)}
+                checked={selectedBrands.includes(brand.name)}
+                onChange={() => toggleBrand(brand.name)}
               />
               <span className="checkmark"></span>
-              {brand}
+              {brand.name}
             </label>
           ))}
         </div>

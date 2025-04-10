@@ -1,34 +1,34 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { useCart } from '../cartContext';
+// import { useCart } from '../cartContext';
 
 const ProductCard = ({ product }) => {
   const [selectedSize, setSelectedSize] = useState(null);
   const [selectedColor, setSelectedColor] = useState(null);
-  const { addToCart } = useCart();
+  // const { addToCart } = useCart();
 
-  const handleAddToCart = () => {
-    // Если у товара есть размеры, но не выбран размер
-    if (product.sizes?.length > 0 && !selectedSize) {
-      alert('Пожалуйста, выберите размер');
-      return;
-    }
+  // const handleAddToCart = () => {
+  //   // Если у товара есть размеры, но не выбран размер
+  //   if (product.sizes?.length > 0 && !selectedSize) {
+  //     alert('Пожалуйста, выберите размер');
+  //     return;
+  //   }
     
-    // Если у товара есть цвета, но не выбран цвет
-    if (product.colors?.length > 0 && !selectedColor) {
-      alert('Пожалуйста, выберите цвет');
-      return;
-    }
+  //   // Если у товара есть цвета, но не выбран цвет
+  //   if (product.colors?.length > 0 && !selectedColor) {
+  //     alert('Пожалуйста, выберите цвет');
+  //     return;
+  //   }
 
-    // Добавляем в корзину с выбранными параметрами или значениями по умолчанию
-    addToCart(
-      product, 
-      product.sizes?.length > 0 ? selectedSize : 'one-size', 
-      product.colors?.length > 0 ? selectedColor : 'default'
-    );
+  //   // Добавляем в корзину с выбранными параметрами или значениями по умолчанию
+  //   addToCart(
+  //     product, 
+  //     product.sizes?.length > 0 ? selectedSize : 'one-size', 
+  //     product.colors?.length > 0 ? selectedColor : 'default'
+  //   );
     
-    alert(`${product.name} добавлен в корзину!`);
-  };
+  //   alert(`${product.name} добавлен в корзину!`);
+  // };
 
   return (
     <div className="product-card">
@@ -48,8 +48,8 @@ const ProductCard = ({ product }) => {
       </Link>
 
       <div className="product-info">
-        <h3>{product.name}</h3>
-        <p className="price">{product.price.toLocaleString()} ₽</p>
+        <h3>{product.brand} {product.name}</h3>
+        {/* <p className="price">{product.price.toLocaleString()} ₽</p> */}
         
         {/* Блок выбора размера - показываем только если есть размеры */}
         {product.sizes?.length > 0 && (
@@ -88,14 +88,14 @@ const ProductCard = ({ product }) => {
         )}
       </div>
 
-      <button 
+      {/* <button 
         className="add-to-cart-btn"
         onClick={handleAddToCart}
         // Кнопка активна всегда, если нет вариантов выбора
         disabled={product.sizes?.length > 0 && !selectedSize}
       >
         Добавить в корзину
-      </button>
+      </button> */}
     </div>
   );
 };
